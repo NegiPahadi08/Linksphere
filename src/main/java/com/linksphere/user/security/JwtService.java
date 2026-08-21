@@ -1,5 +1,6 @@
 package com.linksphere.user.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -30,5 +31,16 @@ public class JwtService {
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    // Validate JWT
+    public String extractEmail(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claims.getSubject();
     }
 }
