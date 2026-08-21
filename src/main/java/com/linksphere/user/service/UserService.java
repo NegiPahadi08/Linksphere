@@ -1,8 +1,8 @@
 package com.linksphere.user.service;
 
+import com.linksphere.user.dto.UserProfileResponse;
 import com.linksphere.user.entity.User;
 import com.linksphere.user.repository.UserRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,19 +11,33 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository repository;
-    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository repository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository repository) {
         this.repository = repository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return repository.save(user);
     }
 
     public Optional<User> getUser(Long id) {
         return repository.findById(id);
+    }
+
+    // Current logged-in user
+    public UserProfileResponse getCurrentUser(String email) {
+
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        return new UserProfileResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getFullName(),
+                user.getBio(),
+                user.getProfilePicture(),
+                user.getCreatedAt()
+        );
     }
 }
