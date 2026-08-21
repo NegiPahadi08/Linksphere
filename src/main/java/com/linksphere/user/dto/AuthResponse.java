@@ -5,14 +5,25 @@ public class AuthResponse {
     private Long id;
     private String username;
     private String email;
+    private String token;
     private String message;
 
     public AuthResponse() {}
 
+    // Register/Login without token
     public AuthResponse(Long id, String username, String email, String message) {
         this.id = id;
         this.username = username;
         this.email = email;
+        this.message = message;
+    }
+
+    // Login with JWT token
+    public AuthResponse(Long id, String username, String email, String token, String message) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.token = token;
         this.message = message;
     }
 
@@ -38,6 +49,14 @@ public class AuthResponse {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getMessage() {
