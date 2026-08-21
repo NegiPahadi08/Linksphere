@@ -41,6 +41,7 @@ public class SecurityConfig {
                 // Authorization rules
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()   // ✅ Static files public
                         .anyRequest().authenticated()
                 )
 

@@ -8,6 +8,7 @@ import com.linksphere.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/users")
@@ -46,5 +47,14 @@ public class UserController {
             @RequestBody UpdateProfileRequest request) {
 
         return service.updateProfile(authentication.getName(), request);
+    }
+
+    // Upload Profile Picture
+    @PostMapping("/profile-picture")
+    public UserProfileResponse uploadProfilePicture(
+            Authentication authentication,
+            @RequestParam("file") MultipartFile file) throws Exception {
+
+        return service.uploadProfilePicture(authentication.getName(), file);
     }
 }
