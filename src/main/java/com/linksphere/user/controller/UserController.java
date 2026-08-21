@@ -1,5 +1,6 @@
 package com.linksphere.user.controller;
 
+import com.linksphere.user.dto.UpdateProfileRequest;
 import com.linksphere.user.dto.UserProfileResponse;
 import com.linksphere.user.entity.User;
 import com.linksphere.user.service.UserService;
@@ -24,7 +25,7 @@ public class UserController {
         return ResponseEntity.ok(service.createUser(user));
     }
 
-    // Get User by ID (JWT Protected)
+    // Get User by ID
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         return service.getUser(id)
@@ -32,9 +33,18 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Get Current Logged-in User (JWT Required)
+    // Get Current Logged-in User
     @GetMapping("/me")
     public UserProfileResponse currentUser(Authentication authentication) {
         return service.getCurrentUser(authentication.getName());
+    }
+
+    // Update Current User Profile
+    @PutMapping("/profile")
+    public UserProfileResponse updateProfile(
+            Authentication authentication,
+            @RequestBody UpdateProfileRequest request) {
+
+        return service.updateProfile(authentication.getName(), request);
     }
 }
