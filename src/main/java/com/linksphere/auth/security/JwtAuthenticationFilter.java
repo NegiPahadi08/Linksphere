@@ -1,12 +1,12 @@
 package com.linksphere.auth.security;
 
-import com.linksphere.auth.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -16,18 +16,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String SECRET =
-            "LinkSphereSuperSecretKeyForJWTAuthentication2026";
-
     private final SecretKey secretKey;
 
-    public JwtAuthenticationFilter() {
+    public JwtAuthenticationFilter(@Value("${JWT_SECRET}") String secret) {
         this.secretKey = io.jsonwebtoken.security.Keys.hmacShaKeyFor(
-                SECRET.getBytes(StandardCharsets.UTF_8)
+                secret.getBytes(StandardCharsets.UTF_8)
         );
     }
 
@@ -63,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(
                                 email,
                                 null,
-                                java.util.Collections.emptyList()
+                                Collections.emptyList()
                         );
 
                 authentication.setDetails(
@@ -76,7 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception ignored) {
-            // Invalid JWT — request continues without authentication
+            // Invalid JWT - request continues without authentication
         }
 
         filterChain.doFilter(request, response);

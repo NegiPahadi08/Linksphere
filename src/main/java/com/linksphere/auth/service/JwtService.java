@@ -2,6 +2,7 @@ package com.linksphere.auth.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -11,17 +12,14 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private static final String SECRET =
-            "LinkSphereSuperSecretKeyForJWTAuthentication2026";
-
     private static final long EXPIRATION_TIME =
             1000 * 60 * 60; // 1 hour
 
     private final SecretKey secretKey;
 
-    public JwtService() {
+    public JwtService(@Value("${JWT_SECRET}") String secret) {
         this.secretKey = Keys.hmacShaKeyFor(
-                SECRET.getBytes(StandardCharsets.UTF_8)
+                secret.getBytes(StandardCharsets.UTF_8)
         );
     }
 
