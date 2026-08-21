@@ -1,544 +1,290 @@
-\# 🚀 LinkSphere - User Service
+# 🚀 LinkSphere - User Service
 
+A production-style social media backend built with **Spring Boot 4**, **PostgreSQL**, **Spring Security**, and **JWT Authentication**.
 
+> **LinkSphere** is an Instagram/LinkedIn-inspired social media platform built as a milestone-based full-stack project.
 
-A production-style social media backend built with \*\*Spring Boot 4\*\*, \*\*PostgreSQL\*\*, \*\*Spring Security\*\*, and \*\*JWT Authentication\*\*.
+---
 
+## 📌 Project Overview
 
+This repository contains the **User Service** of LinkSphere.
 
-> \*\*LinkSphere\*\* is an Instagram/LinkedIn-inspired social media platform built as a milestone-based full-stack project.
+### Current Features
 
+* User Registration
+* User Login
+* BCrypt Password Hashing
+* JWT Authentication
+* Protected User APIs
+* PostgreSQL Integration
+* Global Exception Handling
 
+---
 
-\---
+## 🛠️ Tech Stack
 
+| Technology      | Version                |
+| --------------- | ---------------------- |
+| Java            | 21                     |
+| Spring Boot     | 4.1.0                  |
+| Spring Security | 6.x                    |
+| PostgreSQL      | 17                     |
+| Hibernate / JPA | Latest                 |
+| JWT (jjwt)      | 0.12.7                 |
+| Maven           | Maven Wrapper (`mvnw`) |
 
+---
 
-\## 📌 Project Overview
-
-
-
-This repository contains the \*\*User Service\*\* of LinkSphere.
-
-
-
-Current features include:
-
-
-
-\* User Registration
-
-\* User Login
-
-\* BCrypt Password Hashing
-
-\* JWT Authentication
-
-\* Protected User APIs
-
-\* PostgreSQL Integration
-
-\* Global Exception Handling
-
-
-
-\---
-
-
-
-\## 🛠️ Tech Stack
-
-
-
-| Technology      | Version          |
-
-| --------------- | ---------------- |
-
-| Java            | 21               |
-
-| Spring Boot     | 4.1.0            |
-
-| Spring Security | 6.x              |
-
-| PostgreSQL      | 17               |
-
-| Hibernate / JPA | Latest           |
-
-| JWT (jjwt)      | 0.12.7           |
-
-| Maven           | Wrapper (`mvnw`) |
-
-
-
-\---
-
-
-
-\## 📁 Project Structure
-
-
+## 📁 Project Structure
 
 ```text
-
 user-service/
-
 ├── src/
-
 │   ├── main/
-
 │   │   ├── java/com/linksphere/user/
-
 │   │   │   ├── config/
-
 │   │   │   ├── controller/
-
 │   │   │   ├── dto/
-
 │   │   │   ├── entity/
-
 │   │   │   ├── exception/
-
 │   │   │   ├── repository/
-
 │   │   │   ├── security/
-
 │   │   │   ├── service/
-
 │   │   │   └── UserServiceApplication.java
-
 │   │   └── resources/
-
 │   │       └── application.properties
-
 │   └── test/
-
 ├── pom.xml
-
 ├── mvnw
-
 ├── mvnw.cmd
-
 └── README.md
-
 ```
 
+---
 
+## ⚙️ Configuration
 
-\---
-
-
-
-\## ⚙️ Configuration
-
-
-
-\### PostgreSQL Database
-
-
+### PostgreSQL Database
 
 Create a database named:
 
-
-
 ```sql
-
-CREATE DATABASE linksphere\_users;
-
+CREATE DATABASE linksphere_users;
 ```
 
+### Environment Variable (PowerShell)
 
-
-\### Environment Variable
-
-
-
-Set your PostgreSQL password before running the application.
-
-
-
-\*\*PowerShell\*\*
-
-
+Before running the application:
 
 ```powershell
-
-$env:DB\_PASSWORD="YOUR\_POSTGRES\_PASSWORD"
-
+$env:DB_PASSWORD="YOUR_POSTGRES_PASSWORD"
 ```
 
+---
 
-
-\---
-
-
-
-\## ▶️ Run the Project
-
-
+## ▶️ Run the Project
 
 ```powershell
+cd C:\Users\rahul\LinkSphere\user-service
 
-cd C:\\Users\\rahul\\LinkSphere\\user-service
+$env:DB_PASSWORD="YOUR_POSTGRES_PASSWORD"
 
-
-
-$env:DB\_PASSWORD="YOUR\_POSTGRES\_PASSWORD"
-
-
-
-.\\mvnw.cmd spring-boot:run
-
+.\mvnw.cmd spring-boot:run
 ```
 
-
-
-Server starts on:
-
-
+Server starts at:
 
 ```text
-
 http://localhost:8081
-
 ```
 
+---
 
+## 🔑 Authentication Flow
 
-\---
+### Register User
 
-
-
-\## 🔑 Authentication Flow
-
-
-
-\### Register User
-
-
-
-\*\*POST\*\* `/api/auth/register`
-
-
+**POST** `/api/auth/register`
 
 ```json
-
 {
-
-&#x20; "username": "rahul999",
-
-&#x20; "email": "rahul999@example.com",
-
-&#x20; "password": "SecurePass123",
-
-&#x20; "fullName": "Rahul Negi",
-
-&#x20; "bio": "Registered through Auth API"
-
+  "username": "rahul999",
+  "email": "rahul999@example.com",
+  "password": "SecurePass123",
+  "fullName": "Rahul Negi",
+  "bio": "Registered through Auth API"
 }
-
 ```
 
+### Login User
 
-
-\### Login User
-
-
-
-\*\*POST\*\* `/api/auth/login`
-
-
+**POST** `/api/auth/login`
 
 ```json
-
 {
-
-&#x20; "email": "rahul999@example.com",
-
-&#x20; "password": "SecurePass123"
-
+  "email": "rahul999@example.com",
+  "password": "SecurePass123"
 }
-
 ```
 
-
-
-\*\*Response\*\*
-
-
+### Login Response
 
 ```json
-
 {
-
-&#x20; "id": 3,
-
-&#x20; "username": "rahul999",
-
-&#x20; "email": "rahul999@example.com",
-
-&#x20; "token": "<JWT\_TOKEN>",
-
-&#x20; "message": "Login successful!"
-
+  "id": 3,
+  "username": "rahul999",
+  "email": "rahul999@example.com",
+  "token": "<JWT_TOKEN>",
+  "message": "Login successful!"
 }
-
 ```
 
+---
 
+## 🔒 Protected API Example
 
-\---
+### Get User Profile
 
+**GET** `/api/users/2`
 
-
-\## 🔒 Protected API Example
-
-
-
-\### Get User Profile
-
-
-
-\*\*GET\*\* `/api/users/2`
-
-
-
-Without token:
-
-
+Without JWT:
 
 ```text
-
 401 Unauthorized
-
 ```
-
-
 
 With JWT:
 
-
-
 ```http
-
-Authorization: Bearer <JWT\_TOKEN>
-
+Authorization: Bearer <JWT_TOKEN>
 ```
 
-
-
-Returns:
-
-
+Response:
 
 ```json
-
 {
-
-&#x20; "id": 2,
-
-&#x20; "username": "rahul789",
-
-&#x20; "email": "rahul789@example.com",
-
-&#x20; "fullName": "Rahul Negi",
-
-&#x20; "bio": "Testing BCrypt"
-
+  "id": 2,
+  "username": "rahul789",
+  "email": "rahul789@example.com",
+  "fullName": "Rahul Negi",
+  "bio": "Testing BCrypt"
 }
-
 ```
 
+---
 
-
-\---
-
-
-
-\## 📊 Implemented Features
-
-
+## 📊 Implemented Features
 
 | Feature                   | Status |
-
 | ------------------------- | ------ |
-
 | PostgreSQL Integration    | ✅      |
-
 | JPA/Hibernate Entity      | ✅      |
-
 | User Repository           | ✅      |
-
 | Create User API           | ✅      |
-
 | Get User API              | ✅      |
-
 | BCrypt Password Hashing   | ✅      |
-
 | Register API              | ✅      |
-
 | Login API                 | ✅      |
-
 | JWT Token Generation      | ✅      |
-
+| JWT Authentication Filter | ✅      |
 | JWT Protected APIs        | ✅      |
-
 | Global Exception Handling | ✅      |
 
+---
 
+## 🧪 API Testing (PowerShell)
 
-\---
-
-
-
-\## 🧪 API Testing (PowerShell)
-
-
-
-\### Register
-
-
+### Register
 
 ```powershell
-
 Invoke-RestMethod -Uri "http://localhost:8081/api/auth/register" `
-
-\-Method POST `
-
-\-ContentType "application/json" `
-
-\-Body '{"username":"demo","email":"demo@example.com","password":"Password123","fullName":"Demo User","bio":"Hello LinkSphere"}'
-
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{"username":"demo","email":"demo@example.com","password":"Password123","fullName":"Demo User","bio":"Hello LinkSphere"}'
 ```
 
-
-
-\### Login
-
-
+### Login
 
 ```powershell
-
 Invoke-RestMethod -Uri "http://localhost:8081/api/auth/login" `
-
-\-Method POST `
-
-\-ContentType "application/json" `
-
-\-Body '{"email":"demo@example.com","password":"Password123"}'
-
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{"email":"demo@example.com","password":"Password123"}'
 ```
 
+---
 
+## 📈 Milestone Progress
 
-\---
+### ✅ Milestone 1 — User Service Foundation
 
+* Spring Boot Project Setup
+* PostgreSQL Connection
+* User Entity
+* Repository
+* Service Layer
+* REST Controller
 
+### ✅ Milestone 2 — Authentication Module
 
-\## 📈 Milestone Progress
+* BCrypt Password Hashing
+* Register API
+* Login API
+* JWT Token Generation
+* JWT Authentication Filter
+* Global Exception Handling
 
+### ⏳ Upcoming Milestones
 
+* Profile Management
+* Follow / Unfollow System
+* Posts Service
+* Feed API
+* Likes & Comments
+* Stories
+* Chat (WebSocket)
+* Notifications
+* Search
+* Docker Deployment
 
-\### ✅ Milestone 1 — User Service Foundation
+---
 
-
-
-\* Spring Boot Project Setup
-
-\* PostgreSQL Connection
-
-\* User Entity
-
-\* Repository
-
-\* Service Layer
-
-\* REST Controller
-
-
-
-\### ✅ Milestone 2 — Authentication Module
-
-
-
-\* BCrypt Password Hashing
-
-\* Register API
-
-\* Login API
-
-\* JWT Token Generation
-
-\* JWT Authentication Filter
-
-\* Global Exception Handling
-
-
-
-\### ⏳ Upcoming Milestones
-
-
-
-\* Profile Management
-
-\* Follow / Unfollow
-
-\* Posts Service
-
-\* Feed API
-
-\* Likes \& Comments
-
-\* Stories
-
-\* Chat (WebSocket)
-
-\* Notifications
-
-\* Search
-
-\* Docker Deployment
-
-
-
-\---
-
-
-
-\## 💻 Git Milestones
-
-
+## 💻 Git Milestones
 
 ```text
-
 Milestone 1: User Service with PostgreSQL and Profile APIs
-
-Milestone 2.1: BCrypt Password Hashing
-
-Milestone 2.2: Register API
-
-Milestone 2.3: Login API + Global Exception Handling
-
-Milestone 2.4: JWT Token Generation
-
-Milestone 2.5: JWT Authentication Filter
-
+Milestone 2 Step 2.1: BCrypt password hashing implemented
+Milestone 2 Step 2.2: Register API implemented
+Milestone 2 Step 2.3: Login API and global exception handling
+Milestone 2 Step 2.4: JWT token generation implemented
+Milestone 2 Step 2.5: JWT authentication filter implemented
 ```
 
+Current Git History:
 
+```text
+4e587d4 docs: add project README for LinkSphere user-service
+34715f1 Milestone 2 Step 2.5: JWT authentication filter implemented
+7d4c42e Milestone 2 Step 2.4: JWT token generation implemented
+40e725b Milestone 2 Step 2.3: Login API and global exception handling
+a9fe1a1 Milestone 2 Step 2.2: Register API implemented
+7700470 Milestone 2 Step 2.1: BCrypt password hashing implemented
+233589a Milestone 1: User Service with PostgreSQL and Profile APIs
+```
 
-\---
+---
 
+## 👨‍💻 Author
 
+**Rahul Negi**
 
-\## 👨‍💻 Author
+Building **LinkSphere**, a production-style social media backend using Spring Boot, PostgreSQL, JWT, and modern backend architecture.
 
+---
 
+## 🚀 Project Status
 
-\*\*Rahul Negi\*\*
+**Backend Progress:** Milestone 1 ✅ | Milestone 2 ✅
 
-
-
-Building \*\*LinkSphere\*\* as a production-style social media backend using Spring Boot, PostgreSQL, JWT, and modern backend architecture.
-
-
-
+Next milestone: **Profile Management (`/api/users/me`, Update Profile, Profile Picture Upload)**.
