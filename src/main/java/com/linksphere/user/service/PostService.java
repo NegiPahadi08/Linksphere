@@ -3,14 +3,17 @@ package com.linksphere.user.service;
 import com.linksphere.user.dto.CreatePostRequest;
 import com.linksphere.user.dto.PostResponse;
 import com.linksphere.user.dto.UpdatePostRequest;
+import com.linksphere.user.entity.Follow;
 import com.linksphere.user.entity.Post;
 import com.linksphere.user.entity.User;
+import com.linksphere.user.repository.FollowRepository;
 import com.linksphere.user.repository.LikeRepository;
 import com.linksphere.user.repository.PostRepository;
 import com.linksphere.user.repository.UserRepository;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,14 +23,17 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+    private final FollowRepository followRepository;
 
     public PostService(PostRepository postRepository,
                        UserRepository userRepository,
-                       LikeRepository likeRepository) {
+                       LikeRepository likeRepository,
+                       FollowRepository followRepository) {
 
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.likeRepository = likeRepository;
+        this.followRepository = followRepository;
     }
 
     // Create Post
@@ -75,6 +81,36 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    // Get Feed
+    public List<PostResponse> getFeed(String email) {
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        List<Follow> following = followRepository.findByFollower(currentUser);
+
+        List<Post> feedPosts = new ArrayList<>();
+
+        for (Follow follow : following) {
+
+            User followedUser = follow.getFollowing();
+
+            feedPosts.addAll(
+                    postRepository.findByAuthor(followedUser)
+            );
+        }
+
+        feedPosts.sort(
+                (post1, post2) ->
+                        post2.getCreatedAt()
+                                .compareTo(post1.getCreatedAt())
+        );
+
+        return feedPosts.stream()
+                .map(post -> toResponse(post, email))
+                .collect(Collectors.toList());
+    }
+
     // Update Post
     public PostResponse updatePost(String email,
                                    Long postId,
@@ -86,7 +122,6 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found."));
 
-        // Only post owner can update the post
         if (!post.getAuthor().getId().equals(user.getId())) {
             throw new RuntimeException("You can only update your own posts.");
         }

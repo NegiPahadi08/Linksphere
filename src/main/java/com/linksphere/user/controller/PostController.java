@@ -63,6 +63,18 @@ public class PostController {
         );
     }
 
+    // Get Feed
+    @GetMapping("/feed")
+    public ResponseEntity<List<PostResponse>> getFeed(
+            Authentication authentication) {
+
+        return ResponseEntity.ok(
+                postService.getFeed(
+                        authentication.getName()
+                )
+        );
+    }
+
     // Update Post
     @PutMapping("/{id}")
     public ResponseEntity<PostResponse> updatePost(
