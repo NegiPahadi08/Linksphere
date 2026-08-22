@@ -5,6 +5,7 @@ import com.linksphere.user.dto.PostResponse;
 import com.linksphere.user.dto.UpdatePostRequest;
 import com.linksphere.user.entity.Post;
 import com.linksphere.user.entity.User;
+import com.linksphere.user.repository.LikeRepository;
 import com.linksphere.user.repository.PostRepository;
 import com.linksphere.user.repository.UserRepository;
 
@@ -18,11 +19,15 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
 
     public PostService(PostRepository postRepository,
-                       UserRepository userRepository) {
+                       UserRepository userRepository,
+                       LikeRepository likeRepository) {
+
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.likeRepository = likeRepository;
     }
 
     // Create Post
@@ -44,27 +49,29 @@ public class PostService {
 
         Post savedPost = postRepository.save(post);
 
-        return toResponse(savedPost);
+        return toResponse(savedPost, email);
     }
 
     // Get Post by ID
-    public PostResponse getPost(Long postId) {
+    public PostResponse getPost(Long postId,
+                                String email) {
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found."));
 
-        return toResponse(post);
+        return toResponse(post, email);
     }
 
     // Get all Posts of a User
-    public List<PostResponse> getPostsByUser(Long userId) {
+    public List<PostResponse> getPostsByUser(Long userId,
+                                             String email) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found."));
 
         return postRepository.findByAuthor(user)
                 .stream()
-                .map(this::toResponse)
+                .map(post -> toResponse(post, email))
                 .collect(Collectors.toList());
     }
 
@@ -94,32 +101,22 @@ public class PostService {
 
         Post updatedPost = postRepository.save(post);
 
-        return toResponse(updatedPost);
-    }
-
-    // Delete Post
-    public String deletePost(String email, Long postId) {
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found."));
-
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found."));
-
-        // Only post owner can delete the post
-        if (!post.getAuthor().getId().equals(user.getId())) {
-            throw new RuntimeException("You can only delete your own posts.");
-        }
-
-        postRepository.delete(post);
-
-        return "Post deleted successfully.";
+        return toResponse(updatedPost, email);
     }
 
     // Convert Post Entity to Response DTO
-    private PostResponse toResponse(Post post) {
+    private PostResponse toResponse(Post post,
+                                    String email) {
 
         User author = post.getAuthor();
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        long likesCount = likeRepository.countByPost(post);
+
+        boolean likedByCurrentUser =
+                likeRepository.findByUserAndPost(currentUser, post).isPresent();
 
         return new PostResponse(
                 post.getId(),
@@ -128,7 +125,9 @@ public class PostService {
                 author.getUsername(),
                 author.getFullName(),
                 author.getProfilePicture(),
-                post.getCreatedAt()
+                post.getCreatedAt(),
+                likesCount,
+                likedByCurrentUser
         );
     }
 }

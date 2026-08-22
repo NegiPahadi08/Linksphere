@@ -38,20 +38,28 @@ public class PostController {
     // Get Post by ID
     @GetMapping("/{id}")
     public ResponseEntity<PostResponse> getPost(
+            Authentication authentication,
             @PathVariable Long id) {
 
         return ResponseEntity.ok(
-                postService.getPost(id)
+                postService.getPost(
+                        id,
+                        authentication.getName()
+                )
         );
     }
 
     // Get all Posts of a User
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<PostResponse>> getPostsByUser(
+            Authentication authentication,
             @PathVariable Long userId) {
 
         return ResponseEntity.ok(
-                postService.getPostsByUser(userId)
+                postService.getPostsByUser(
+                        userId,
+                        authentication.getName()
+                )
         );
     }
 
@@ -67,20 +75,6 @@ public class PostController {
                         authentication.getName(),
                         id,
                         request
-                )
-        );
-    }
-
-    // Delete Post
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(
-            Authentication authentication,
-            @PathVariable Long id) {
-
-        return ResponseEntity.ok(
-                postService.deletePost(
-                        authentication.getName(),
-                        id
                 )
         );
     }
