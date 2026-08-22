@@ -3,6 +3,7 @@ package com.linksphere.user.service;
 import com.linksphere.user.dto.UpdateProfileRequest;
 import com.linksphere.user.dto.UserProfileResponse;
 import com.linksphere.user.entity.User;
+import com.linksphere.user.repository.FollowRepository;
 import com.linksphere.user.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -20,12 +21,15 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository repository;
+    private final FollowRepository followRepository;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository,
+                       FollowRepository followRepository) {
         this.repository = repository;
+        this.followRepository = followRepository;
     }
 
     // Create User
@@ -51,12 +55,15 @@ public class UserService {
                 user.getFullName(),
                 user.getBio(),
                 user.getProfilePicture(),
-                user.getCreatedAt()
+                user.getCreatedAt(),
+                followRepository.countByFollowing(user),
+                followRepository.countByFollower(user)
         );
     }
 
     // Update Current User Profile
-    public UserProfileResponse updateProfile(String email, UpdateProfileRequest request) {
+    public UserProfileResponse updateProfile(String email,
+                                              UpdateProfileRequest request) {
 
         User user = repository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found."));
@@ -73,12 +80,15 @@ public class UserService {
                 updatedUser.getFullName(),
                 updatedUser.getBio(),
                 updatedUser.getProfilePicture(),
-                updatedUser.getCreatedAt()
+                updatedUser.getCreatedAt(),
+                followRepository.countByFollowing(updatedUser),
+                followRepository.countByFollower(updatedUser)
         );
     }
 
     // Upload Profile Picture
-    public UserProfileResponse uploadProfilePicture(String email, MultipartFile file)
+    public UserProfileResponse uploadProfilePicture(String email,
+                                                     MultipartFile file)
             throws IOException {
 
         User user = repository.findByEmail(email)
@@ -92,15 +102,18 @@ public class UserService {
         }
 
         // Generate unique filename
-        String fileName = user.getUsername() + "-" +
-                System.currentTimeMillis() + "-" +
-                file.getOriginalFilename();
+        String fileName = user.getUsername() + "-"
+                + System.currentTimeMillis() + "-"
+                + file.getOriginalFilename();
 
         Path filePath = uploadPath.resolve(fileName);
 
         // Save image
-        Files.copy(file.getInputStream(), filePath,
-                StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(
+                file.getInputStream(),
+                filePath,
+                StandardCopyOption.REPLACE_EXISTING
+        );
 
         // Save image URL in database
         user.setProfilePicture("/uploads/" + fileName);
@@ -114,7 +127,9 @@ public class UserService {
                 updatedUser.getFullName(),
                 updatedUser.getBio(),
                 updatedUser.getProfilePicture(),
-                updatedUser.getCreatedAt()
+                updatedUser.getCreatedAt(),
+                followRepository.countByFollowing(updatedUser),
+                followRepository.countByFollower(updatedUser)
         );
     }
 }
