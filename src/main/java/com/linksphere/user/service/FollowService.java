@@ -1,10 +1,14 @@
 package com.linksphere.user.service;
 
+import com.linksphere.user.dto.FollowUserResponse;
 import com.linksphere.user.entity.Follow;
 import com.linksphere.user.entity.User;
 import com.linksphere.user.repository.FollowRepository;
 import com.linksphere.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FollowService {
@@ -59,5 +63,26 @@ public class FollowService {
         followRepository.delete(follow);
 
         return "You unfollowed " + following.getUsername();
+    }
+
+    // Get followers of a user
+    public List<FollowUserResponse> getFollowers(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        return followRepository.findByFollowing(user)
+                .stream()
+                .map(follow -> {
+                    User follower = follow.getFollower();
+
+                    return new FollowUserResponse(
+                            follower.getId(),
+                            follower.getUsername(),
+                            follower.getFullName(),
+                            follower.getProfilePicture()
+                    );
+                })
+                .collect(Collectors.toList());
     }
 }

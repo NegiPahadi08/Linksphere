@@ -1,5 +1,6 @@
 package com.linksphere.user.controller;
 
+import com.linksphere.user.dto.FollowUserResponse;
 import com.linksphere.user.dto.UpdateProfileRequest;
 import com.linksphere.user.dto.UserProfileResponse;
 import com.linksphere.user.entity.User;
@@ -10,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -80,6 +83,16 @@ public class UserController {
 
         return ResponseEntity.ok(
                 followService.unfollowUser(authentication.getName(), userId)
+        );
+    }
+
+    // Get Followers of a User
+    @GetMapping("/{id}/followers")
+    public ResponseEntity<List<FollowUserResponse>> getFollowers(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                followService.getFollowers(id)
         );
     }
 }
