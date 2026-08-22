@@ -1,6 +1,7 @@
 package com.linksphere.user.controller;
 
 import com.linksphere.user.dto.CreatePostRequest;
+import com.linksphere.user.dto.FeedResponse;
 import com.linksphere.user.dto.PostResponse;
 import com.linksphere.user.dto.UpdatePostRequest;
 import com.linksphere.user.service.PostService;
@@ -65,7 +66,7 @@ public class PostController {
 
     // Get Feed with Pagination
     @GetMapping("/feed")
-    public ResponseEntity<List<PostResponse>> getFeed(
+    public ResponseEntity<FeedResponse> getFeed(
             Authentication authentication,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

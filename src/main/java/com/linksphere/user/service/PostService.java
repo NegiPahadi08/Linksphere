@@ -1,6 +1,7 @@
 package com.linksphere.user.service;
 
 import com.linksphere.user.dto.CreatePostRequest;
+import com.linksphere.user.dto.FeedResponse;
 import com.linksphere.user.dto.PostResponse;
 import com.linksphere.user.dto.UpdatePostRequest;
 import com.linksphere.user.entity.Follow;
@@ -11,8 +12,6 @@ import com.linksphere.user.repository.LikeRepository;
 import com.linksphere.user.repository.PostRepository;
 import com.linksphere.user.repository.UserRepository;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -121,10 +120,10 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    // Get paginated Feed
-    public List<PostResponse> getFeed(String email,
-                                      int page,
-                                      int size) {
+    // Get paginated Feed with metadata
+    public FeedResponse getFeed(String email,
+                                int page,
+                                int size) {
 
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found."));
@@ -137,6 +136,7 @@ public class PostService {
             throw new RuntimeException("Size must be greater than zero.");
         }
 
+        // Maximum page size
         if (size > 50) {
             size = 50;
         }
@@ -146,12 +146,12 @@ public class PostService {
 
         List<Post> allFeedPosts = new ArrayList<>();
 
-        // Add current user's posts
+        // Current user's own posts
         allFeedPosts.addAll(
                 postRepository.findByAuthor(currentUser)
         );
 
-        // Add followed users' posts
+        // Posts from followed users
         for (Follow follow : following) {
 
             User followedUser = follow.getFollowing();
@@ -170,8 +170,15 @@ public class PostService {
 
         int start = page * size;
 
+        // No posts on requested page
         if (start >= allFeedPosts.size()) {
-            return new ArrayList<>();
+
+            return new FeedResponse(
+                    new ArrayList<>(),
+                    page,
+                    size,
+                    false
+            );
         }
 
         int end = Math.min(
@@ -179,10 +186,23 @@ public class PostService {
                 allFeedPosts.size()
         );
 
-        return allFeedPosts.subList(start, end)
-                .stream()
-                .map(post -> toResponse(post, email))
-                .collect(Collectors.toList());
+        List<PostResponse> posts =
+                allFeedPosts
+                        .subList(start, end)
+                        .stream()
+                        .map(post -> toResponse(post, email))
+                        .collect(Collectors.toList());
+
+        // Check if another page exists
+        boolean hasNext =
+                end < allFeedPosts.size();
+
+        return new FeedResponse(
+                posts,
+                page,
+                size,
+                hasNext
+        );
     }
 
     // Update Post
