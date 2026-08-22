@@ -71,4 +71,15 @@ public class UserController {
                 followService.followUser(authentication.getName(), userId)
         );
     }
+
+    // Unfollow a User
+    @DeleteMapping("/unfollow/{userId}")
+    public ResponseEntity<String> unfollowUser(
+            Authentication authentication,
+            @PathVariable Long userId) {
+
+        return ResponseEntity.ok(
+                followService.unfollowUser(authentication.getName(), userId)
+        );
+    }
 }

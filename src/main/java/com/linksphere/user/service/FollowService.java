@@ -43,4 +43,21 @@ public class FollowService {
 
         return "You are now following " + following.getUsername();
     }
+
+    // Unfollow a user
+    public String unfollowUser(String email, Long userId) {
+
+        User follower = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        User following = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Target user not found."));
+
+        Follow follow = followRepository.findByFollowerAndFollowing(follower, following)
+                .orElseThrow(() -> new RuntimeException("You are not following this user."));
+
+        followRepository.delete(follow);
+
+        return "You unfollowed " + following.getUsername();
+    }
 }
