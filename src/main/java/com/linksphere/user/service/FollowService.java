@@ -85,4 +85,25 @@ public class FollowService {
                 })
                 .collect(Collectors.toList());
     }
+
+    // Get users that a user is following
+    public List<FollowUserResponse> getFollowing(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        return followRepository.findByFollower(user)
+                .stream()
+                .map(follow -> {
+                    User following = follow.getFollowing();
+
+                    return new FollowUserResponse(
+                            following.getId(),
+                            following.getUsername(),
+                            following.getFullName(),
+                            following.getProfilePicture()
+                    );
+                })
+                .collect(Collectors.toList());
+    }
 }

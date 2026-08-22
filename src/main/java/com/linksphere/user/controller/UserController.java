@@ -95,4 +95,14 @@ public class UserController {
                 followService.getFollowers(id)
         );
     }
+
+    // Get Users That a User is Following
+    @GetMapping("/{id}/following")
+    public ResponseEntity<List<FollowUserResponse>> getFollowing(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                followService.getFollowing(id)
+        );
+    }
 }
