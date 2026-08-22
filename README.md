@@ -1,60 +1,164 @@
-# 🚀 LinkSphere - User Service
+# 🚀 LinkSphere — User Service
 
-A production-style social media backend built with **Spring Boot 4**, **PostgreSQL**, **Spring Security**, and **JWT Authentication**.
+> **A production-style social networking backend built with Spring Boot, PostgreSQL, Spring Security, and JWT-based authentication.**
 
-> **LinkSphere** is an Instagram/LinkedIn-inspired social media platform built as a milestone-based full-stack project.
+LinkSphere is an **Instagram/LinkedIn-inspired social media platform** being developed with a milestone-driven backend architecture.
 
----
-
-## 📌 Project Overview
-
-This repository contains the **User Service** of LinkSphere.
-
-### Current Features
-
-* User Registration
-* User Login
-* BCrypt Password Hashing
-* JWT Authentication
-* Protected User APIs
-* PostgreSQL Integration
-* Global Exception Handling
+The project focuses on building a **secure, scalable, and maintainable backend** with authentication, user management, stories, social features, event-driven communication, caching, and containerized deployment.
 
 ---
 
-## 🛠️ Tech Stack
+## 📌 Overview
 
-| Technology      | Version                |
-| --------------- | ---------------------- |
-| Java            | 21                     |
-| Spring Boot     | 4.1.0                  |
-| Spring Security | 6.x                    |
-| PostgreSQL      | 17                     |
-| Hibernate / JPA | Latest                 |
-| JWT (jjwt)      | 0.12.7                 |
-| Maven           | Maven Wrapper (`mvnw`) |
+The **User Service** is one of the core backend services of LinkSphere.
+
+It is responsible for:
+
+* User registration and authentication
+* Secure password management
+* JWT-based authorization
+* User profile management
+* Protected REST APIs
+* PostgreSQL persistence
+* Story management
+* Global exception handling
+
+The service is being developed incrementally as part of the LinkSphere backend architecture.
 
 ---
 
-## 📁 Project Structure
+## ✨ Current Capabilities
+
+### 🔐 Authentication & Security
+
+* User registration
+* User login
+* BCrypt password hashing
+* JWT token generation
+* JWT authentication filter
+* Protected REST endpoints
+* Authentication-based API access
+* Global exception handling
+
+### 👤 User Management
+
+* User entity
+* User repository
+* User creation
+* User profile retrieval
+* PostgreSQL persistence
+
+### 📖 Stories — In Development
+
+* Story entity
+* User-to-story relationship
+* Story content
+* Story creation timestamp
+* Story expiration timestamp
+* Story repository
+
+> **Story Controller and Service APIs are currently under development.**
+
+---
+
+# 🛠️ Technology Stack
+
+| Technology         | Version / Usage |
+| ------------------ | --------------- |
+| ☕ Java             | 21              |
+| 🌱 Spring Boot     | 4.x             |
+| 🔐 Spring Security | 6.x             |
+| 🗄️ PostgreSQL     | 17              |
+| 🧩 Hibernate / JPA | Latest          |
+| 🔑 JWT / JJWT      | 0.12.7          |
+| 📦 Maven           | Maven Wrapper   |
+| 🔧 Git             | Version Control |
+
+---
+
+# 🏗️ Architecture
+
+The project follows a layered backend architecture:
+
+```text
+                    ┌─────────────────────┐
+                    │      Client         │
+                    │ Web / Mobile / API  │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │   REST Controllers  │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │    Service Layer    │
+                    │ Business Logic      │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ Repository Layer    │
+                    │ Spring Data JPA     │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │     PostgreSQL      │
+                    └─────────────────────┘
+```
+
+Security is handled through:
+
+```text
+Client
+  │
+  ▼
+JWT Token
+  │
+  ▼
+JWT Authentication Filter
+  │
+  ▼
+Spring Security
+  │
+  ▼
+Protected Controller
+```
+
+---
+
+# 📁 Project Structure
 
 ```text
 user-service/
+│
 ├── src/
 │   ├── main/
-│   │   ├── java/com/linksphere/user/
-│   │   │   ├── config/
-│   │   │   ├── controller/
-│   │   │   ├── dto/
-│   │   │   ├── entity/
-│   │   │   ├── exception/
-│   │   │   ├── repository/
-│   │   │   ├── security/
-│   │   │   ├── service/
-│   │   │   └── UserServiceApplication.java
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── linksphere/
+│   │   │           └── user/
+│   │   │               ├── config/
+│   │   │               ├── controller/
+│   │   │               ├── dto/
+│   │   │               ├── entity/
+│   │   │               │   ├── User.java
+│   │   │               │   └── Story.java
+│   │   │               ├── exception/
+│   │   │               ├── repository/
+│   │   │               │   ├── UserRepository.java
+│   │   │               │   └── StoryRepository.java
+│   │   │               ├── security/
+│   │   │               ├── service/
+│   │   │               └── UserServiceApplication.java
+│   │   │
 │   │   └── resources/
 │   │       └── application.properties
+│   │
 │   └── test/
+│
 ├── pom.xml
 ├── mvnw
 ├── mvnw.cmd
@@ -63,37 +167,49 @@ user-service/
 
 ---
 
-## ⚙️ Configuration
+# 🗄️ Database Configuration
 
-### PostgreSQL Database
+LinkSphere currently uses **PostgreSQL** for persistent data storage.
 
-Create a database named:
+### Create Database
 
 ```sql
 CREATE DATABASE linksphere_users;
 ```
 
-### Environment Variable (PowerShell)
+### Configure Database Password
 
-Before running the application:
+PowerShell:
 
 ```powershell
 $env:DB_PASSWORD="YOUR_POSTGRES_PASSWORD"
 ```
+
+> Database credentials should be provided through environment variables rather than committed directly to source control.
 
 ---
 
-## ▶️ Run the Project
+# ▶️ Running the Service
+
+Clone the repository and navigate to the service:
 
 ```powershell
 cd C:\Users\rahul\LinkSphere\user-service
+```
 
+Set the PostgreSQL password:
+
+```powershell
 $env:DB_PASSWORD="YOUR_POSTGRES_PASSWORD"
+```
 
+Start the application:
+
+```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-Server starts at:
+The service runs on:
 
 ```text
 http://localhost:8081
@@ -101,40 +217,102 @@ http://localhost:8081
 
 ---
 
-## 🔑 Authentication Flow
+# 🔐 Authentication
 
-### Register User
+LinkSphere uses **JWT-based authentication**.
 
-**POST** `/api/auth/register`
+### Authentication Flow
+
+```text
+Register
+   │
+   ▼
+User Credentials
+   │
+   ▼
+BCrypt Password Hashing
+   │
+   ▼
+PostgreSQL
+```
+
+Login:
+
+```text
+Login Request
+     │
+     ▼
+Validate Credentials
+     │
+     ▼
+Generate JWT
+     │
+     ▼
+Return Token
+```
+
+Protected request:
+
+```text
+Client
+  │
+  │ Authorization: Bearer <JWT>
+  ▼
+JWT Filter
+  │
+  ▼
+Spring Security
+  │
+  ▼
+Protected API
+```
+
+---
+
+# 🔑 API Endpoints
+
+## Authentication
+
+### Register
+
+```http
+POST /api/auth/register
+```
+
+Example:
 
 ```json
 {
-  "username": "rahul999",
-  "email": "rahul999@example.com",
-  "password": "SecurePass123",
-  "fullName": "Rahul Negi",
-  "bio": "Registered through Auth API"
+  "username": "demo",
+  "email": "demo@example.com",
+  "password": "Password123",
+  "fullName": "Demo User",
+  "bio": "Hello LinkSphere"
 }
 ```
 
-### Login User
+### Login
 
-**POST** `/api/auth/login`
+```http
+POST /api/auth/login
+```
+
+Example:
 
 ```json
 {
-  "email": "rahul999@example.com",
-  "password": "SecurePass123"
+  "email": "demo@example.com",
+  "password": "Password123"
 }
 ```
 
-### Login Response
+Example response:
 
 ```json
 {
   "id": 3,
-  "username": "rahul999",
-  "email": "rahul999@example.com",
+  "username": "demo",
+  "email": "demo@example.com",
   "token": "<JWT_TOKEN>",
   "message": "Login successful!"
 }
@@ -142,25 +320,27 @@ http://localhost:8081
 
 ---
 
-## 🔒 Protected API Example
+# 👤 User API
 
 ### Get User Profile
 
-**GET** `/api/users/2`
-
-Without JWT:
-
-```text
-401 Unauthorized
+```http
+GET /api/users/{id}
 ```
 
-With JWT:
+Authentication:
 
 ```http
 Authorization: Bearer <JWT_TOKEN>
 ```
 
-Response:
+Without authentication:
+
+```text
+401 Unauthorized
+```
+
+Example response:
 
 ```json
 {
@@ -174,26 +354,67 @@ Response:
 
 ---
 
-## 📊 Implemented Features
+# 📖 Stories
 
-| Feature                   | Status |
-| ------------------------- | ------ |
-| PostgreSQL Integration    | ✅      |
-| JPA/Hibernate Entity      | ✅      |
-| User Repository           | ✅      |
-| Create User API           | ✅      |
-| Get User API              | ✅      |
-| BCrypt Password Hashing   | ✅      |
-| Register API              | ✅      |
-| Login API                 | ✅      |
-| JWT Token Generation      | ✅      |
-| JWT Authentication Filter | ✅      |
-| JWT Protected APIs        | ✅      |
-| Global Exception Handling | ✅      |
+Stories are currently being developed under **Milestone 7**.
+
+### Story Model
+
+Each story contains:
+
+```text
+Story
+├── id
+├── user
+├── content
+├── createdAt
+└── expiresAt
+```
+
+### Story Development Progress
+
+| Component                 | Status         |
+| ------------------------- | -------------- |
+| Story Entity              | 🟡 In Progress |
+| User → Story Relationship | 🟡 In Progress |
+| Story Repository          | 🟡 In Progress |
+| Story Create API          | ⏳ Planned      |
+| Story Fetch API           | ⏳ Planned      |
+| Story Expiration          | ⏳ Planned      |
+| Story Testing             | ⏳ Planned      |
 
 ---
 
-## 🧪 API Testing (PowerShell)
+# 📊 Feature Status
+
+| Feature                   | Status |
+| ------------------------- | :----: |
+| Spring Boot Setup         |    ✅   |
+| PostgreSQL Integration    |    ✅   |
+| JPA / Hibernate           |    ✅   |
+| User Entity               |    ✅   |
+| User Repository           |    ✅   |
+| User APIs                 |    ✅   |
+| BCrypt Password Hashing   |    ✅   |
+| Registration API          |    ✅   |
+| Login API                 |    ✅   |
+| JWT Generation            |    ✅   |
+| JWT Authentication Filter |    ✅   |
+| Protected APIs            |    ✅   |
+| Global Exception Handling |    ✅   |
+| Story Entity              |   🟡   |
+| Story Repository          |   🟡   |
+| Story Create API          |    ⏳   |
+| Story Fetch API           |    ⏳   |
+
+**Legend:**
+✅ Completed · 🟡 In Progress · ⏳ Planned
+
+---
+
+# 🧪 API Testing
+
+APIs can be tested using **PowerShell**, Postman, or any REST client.
 
 ### Register
 
@@ -215,76 +436,204 @@ Invoke-RestMethod -Uri "http://localhost:8081/api/auth/login" `
 
 ---
 
-## 📈 Milestone Progress
+# 📈 Development Roadmap
 
-### ✅ Milestone 1 — User Service Foundation
+## ✅ Milestone 1 — User Service Foundation
 
-* Spring Boot Project Setup
-* PostgreSQL Connection
-* User Entity
-* Repository
-* Service Layer
-* REST Controller
+* Spring Boot project setup
+* PostgreSQL integration
+* User entity
+* Repository layer
+* Service layer
+* REST controllers
 
-### ✅ Milestone 2 — Authentication Module
+## ✅ Milestone 2 — Authentication
 
-* BCrypt Password Hashing
-* Register API
+* BCrypt password hashing
+* Registration API
 * Login API
-* JWT Token Generation
-* JWT Authentication Filter
-* Global Exception Handling
+* JWT generation
+* JWT authentication filter
+* Global exception handling
 
-### ⏳ Upcoming Milestones
+## 🟡 Milestone 7 — Stories
 
-* Profile Management
-* Follow / Unfollow System
-* Posts Service
-* Feed API
-* Likes & Comments
-* Stories
-* Chat (WebSocket)
-* Notifications
-* Search
-* Docker Deployment
+### Step 7.1 — Story Entity & Repository
+
+* Story entity
+* User relationship
+* Story content
+* Creation timestamp
+* Expiration timestamp
+* Story repository
+
+### Step 7.2 — Story Create API
+
+* Story DTO
+* Story service
+* Story controller
+* JWT authenticated story creation
+
+### Step 7.3 — Story Fetch API
+
+* Fetch active stories
+* User-specific stories
+* Expiration filtering
+
+### Step 7.4 — Story Expiration
+
+* Expiration handling
+* Expired story filtering
+* Cleanup strategy
+
+### Step 7.5 — Story Testing
+
+* API testing
+* Repository testing
+* Authentication testing
+* Expiration testing
 
 ---
 
-## 💻 Git Milestones
+# 🚀 Future Roadmap
+
+After Stories, the planned backend roadmap includes:
+
+```text
+Stories
+   │
+   ▼
+Posts & Feed
+   │
+   ▼
+Likes & Comments
+   │
+   ▼
+Follow / Unfollow
+   │
+   ▼
+Notifications
+   │
+   ▼
+Chat / WebSocket
+   │
+   ▼
+Search
+   │
+   ▼
+Redis Caching
+   │
+   ▼
+Kafka Event Streaming
+   │
+   ▼
+API Gateway
+   │
+   ▼
+Docker
+   │
+   ▼
+Cloud Deployment
+```
+
+---
+
+# 🧩 Planned Infrastructure
+
+The long-term architecture is planned to incorporate:
+
+* **Docker** — Containerization
+* **Redis** — Caching and performance
+* **Apache Kafka** — Event-driven communication
+* **API Gateway** — Centralized routing
+* **WebSocket** — Real-time messaging
+* **AWS / Cloud** — Deployment and infrastructure
+
+---
+
+# 💻 Git Milestones
 
 ```text
 Milestone 1: User Service with PostgreSQL and Profile APIs
-Milestone 2 Step 2.1: BCrypt password hashing implemented
-Milestone 2 Step 2.2: Register API implemented
-Milestone 2 Step 2.3: Login API and global exception handling
-Milestone 2 Step 2.4: JWT token generation implemented
-Milestone 2 Step 2.5: JWT authentication filter implemented
+
+Milestone 2 Step 2.1:
+BCrypt password hashing implemented
+
+Milestone 2 Step 2.2:
+Register API implemented
+
+Milestone 2 Step 2.3:
+Login API and global exception handling
+
+Milestone 2 Step 2.4:
+JWT token generation implemented
+
+Milestone 2 Step 2.5:
+JWT authentication filter implemented
+
+Milestone 7 Step 7.1:
+Story Entity + Repository
+
+Milestone 7 Step 7.2:
+Story Create API
+
+Milestone 7 Step 7.3:
+Story Fetch API
+
+Milestone 7 Step 7.4:
+Story Expiry / Cleanup
+
+Milestone 7 Step 7.5:
+Story Testing
 ```
 
-Current Git History:
+---
+
+# 📌 Current Development Status
 
 ```text
-4e587d4 docs: add project README for LinkSphere user-service
-34715f1 Milestone 2 Step 2.5: JWT authentication filter implemented
-7d4c42e Milestone 2 Step 2.4: JWT token generation implemented
-40e725b Milestone 2 Step 2.3: Login API and global exception handling
-a9fe1a1 Milestone 2 Step 2.2: Register API implemented
-7700470 Milestone 2 Step 2.1: BCrypt password hashing implemented
-233589a Milestone 1: User Service with PostgreSQL and Profile APIs
+Milestone 1  ✅ Complete
+Milestone 2  ✅ Complete
+Milestone 7  🟡 In Progress
 ```
 
+### Current Step
+
+**Milestone 7 → Step 7.1 — Story Entity + Repository**
+
+### Next Step
+
+**Milestone 7 → Step 7.2 — Story Create API**
+
 ---
 
-## 👨‍💻 Author
+# 👨‍💻 Author
 
-**Rahul Negi**
+## Rahul Negi
 
-Building **LinkSphere**, a production-style social media backend using Spring Boot, PostgreSQL, JWT, and modern backend architecture.
+Building **LinkSphere** — a production-style social media backend focused on secure authentication, scalable backend architecture, REST APIs, event-driven systems, caching, and cloud-ready infrastructure.
 
 ---
 
-## 🚀 Project Status
+# ⭐ Project Vision
 
-**Backend Progress:** Milestone 1 ✅ | Milestone 2 ✅
+The goal of LinkSphere is to evolve from a basic social-media backend into a **production-style distributed backend system**.
 
-Next milestone: **Profile Management (`/api/users/me`, Update Profile, Profile Picture Upload)**.
+The project emphasizes:
+
+* 🔐 Secure authentication
+* 🏗️ Clean backend architecture
+* 🗄️ Reliable data persistence
+* 🔄 RESTful API design
+* ⚡ High-performance caching
+* 📨 Event-driven architecture
+* 💬 Real-time communication
+* 🐳 Containerization
+* ☁️ Cloud deployment
+* 📈 Scalable microservices architecture
+
+---
+
+> **Status:** 🚧 Actively under development
+> **Current milestone:** Milestone 7 — Stories
+> **Current step:** Step 7.1 — Story Entity + Repository
