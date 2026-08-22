@@ -3,6 +3,7 @@ package com.linksphere.user.controller;
 import com.linksphere.user.dto.UpdateProfileRequest;
 import com.linksphere.user.dto.UserProfileResponse;
 import com.linksphere.user.entity.User;
+import com.linksphere.user.service.FollowService;
 import com.linksphere.user.service.UserService;
 
 import org.springframework.http.ResponseEntity;
@@ -15,9 +16,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserService service;
+    private final FollowService followService;
 
-    public UserController(UserService service) {
+    public UserController(UserService service, FollowService followService) {
         this.service = service;
+        this.followService = followService;
     }
 
     // Create User
@@ -56,5 +59,16 @@ public class UserController {
             @RequestParam("file") MultipartFile file) throws Exception {
 
         return service.uploadProfilePicture(authentication.getName(), file);
+    }
+
+    // Follow a User
+    @PostMapping("/follow/{userId}")
+    public ResponseEntity<String> followUser(
+            Authentication authentication,
+            @PathVariable Long userId) {
+
+        return ResponseEntity.ok(
+                followService.followUser(authentication.getName(), userId)
+        );
     }
 }
