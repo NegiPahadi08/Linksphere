@@ -1,10 +1,13 @@
 package com.linksphere.user.controller;
 
+import com.linksphere.user.dto.LikeUserResponse;
 import com.linksphere.user.service.LikeService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -51,6 +54,16 @@ public class LikeController {
 
         return ResponseEntity.ok(
                 likeService.getLikeCount(postId)
+        );
+    }
+
+    // Get Users Who Liked Post
+    @GetMapping("/{postId}/likes")
+    public ResponseEntity<List<LikeUserResponse>> getLikedUsers(
+            @PathVariable Long postId) {
+
+        return ResponseEntity.ok(
+                likeService.getLikedUsers(postId)
         );
     }
 }

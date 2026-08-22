@@ -1,5 +1,6 @@
 package com.linksphere.user.service;
 
+import com.linksphere.user.dto.LikeUserResponse;
 import com.linksphere.user.entity.Like;
 import com.linksphere.user.entity.Post;
 import com.linksphere.user.entity.User;
@@ -8,6 +9,9 @@ import com.linksphere.user.repository.PostRepository;
 import com.linksphere.user.repository.UserRepository;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class LikeService {
@@ -33,7 +37,6 @@ public class LikeService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found."));
 
-        // Check if user already liked this post
         if (likeRepository.findByUserAndPost(user, post).isPresent()) {
             throw new RuntimeException("You already liked this post.");
         }
@@ -71,5 +74,23 @@ public class LikeService {
                 .orElseThrow(() -> new RuntimeException("Post not found."));
 
         return likeRepository.countByPost(post);
+    }
+
+    // Get Users Who Liked the Post
+    public List<LikeUserResponse> getLikedUsers(Long postId) {
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found."));
+
+        return likeRepository.findByPost(post)
+                .stream()
+                .map(Like::getUser)
+                .map(user -> new LikeUserResponse(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getFullName(),
+                        user.getProfilePicture()
+                ))
+                .collect(Collectors.toList());
     }
 }
