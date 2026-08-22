@@ -63,14 +63,18 @@ public class PostController {
         );
     }
 
-    // Get Feed
+    // Get Feed with Pagination
     @GetMapping("/feed")
     public ResponseEntity<List<PostResponse>> getFeed(
-            Authentication authentication) {
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
         return ResponseEntity.ok(
                 postService.getFeed(
-                        authentication.getName()
+                        authentication.getName(),
+                        page,
+                        size
                 )
         );
     }

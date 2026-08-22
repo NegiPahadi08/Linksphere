@@ -11,6 +11,8 @@ import com.linksphere.user.repository.LikeRepository;
 import com.linksphere.user.repository.PostRepository;
 import com.linksphere.user.repository.UserRepository;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -92,12 +94,12 @@ public class PostService {
 
         List<Post> feedPosts = new ArrayList<>();
 
-        // Add current user's own posts
+        // Current user's own posts
         feedPosts.addAll(
                 postRepository.findByAuthor(currentUser)
         );
 
-        // Add posts from users being followed
+        // Posts from followed users
         for (Follow follow : following) {
 
             User followedUser = follow.getFollowing();
@@ -107,7 +109,7 @@ public class PostService {
             );
         }
 
-        // Newest posts first
+        // Newest first
         feedPosts.sort(
                 (post1, post2) ->
                         post2.getCreatedAt()
@@ -115,6 +117,70 @@ public class PostService {
         );
 
         return feedPosts.stream()
+                .map(post -> toResponse(post, email))
+                .collect(Collectors.toList());
+    }
+
+    // Get paginated Feed
+    public List<PostResponse> getFeed(String email,
+                                      int page,
+                                      int size) {
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        if (page < 0) {
+            throw new RuntimeException("Page cannot be negative.");
+        }
+
+        if (size <= 0) {
+            throw new RuntimeException("Size must be greater than zero.");
+        }
+
+        if (size > 50) {
+            size = 50;
+        }
+
+        List<Follow> following =
+                followRepository.findByFollower(currentUser);
+
+        List<Post> allFeedPosts = new ArrayList<>();
+
+        // Add current user's posts
+        allFeedPosts.addAll(
+                postRepository.findByAuthor(currentUser)
+        );
+
+        // Add followed users' posts
+        for (Follow follow : following) {
+
+            User followedUser = follow.getFollowing();
+
+            allFeedPosts.addAll(
+                    postRepository.findByAuthor(followedUser)
+            );
+        }
+
+        // Newest first
+        allFeedPosts.sort(
+                (post1, post2) ->
+                        post2.getCreatedAt()
+                                .compareTo(post1.getCreatedAt())
+        );
+
+        int start = page * size;
+
+        if (start >= allFeedPosts.size()) {
+            return new ArrayList<>();
+        }
+
+        int end = Math.min(
+                start + size,
+                allFeedPosts.size()
+        );
+
+        return allFeedPosts.subList(start, end)
+                .stream()
                 .map(post -> toResponse(post, email))
                 .collect(Collectors.toList());
     }
@@ -130,7 +196,6 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found."));
 
-        // Only post owner can update the post
         if (!post.getAuthor().getId().equals(user.getId())) {
 
             throw new RuntimeException(
