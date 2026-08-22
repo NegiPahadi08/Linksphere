@@ -97,6 +97,25 @@ public class PostService {
         return toResponse(updatedPost);
     }
 
+    // Delete Post
+    public String deletePost(String email, Long postId) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found."));
+
+        // Only post owner can delete the post
+        if (!post.getAuthor().getId().equals(user.getId())) {
+            throw new RuntimeException("You can only delete your own posts.");
+        }
+
+        postRepository.delete(post);
+
+        return "Post deleted successfully.";
+    }
+
     // Convert Post Entity to Response DTO
     private PostResponse toResponse(Post post) {
 
