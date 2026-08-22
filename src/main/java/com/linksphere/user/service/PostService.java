@@ -87,10 +87,17 @@ public class PostService {
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found."));
 
-        List<Follow> following = followRepository.findByFollower(currentUser);
+        List<Follow> following =
+                followRepository.findByFollower(currentUser);
 
         List<Post> feedPosts = new ArrayList<>();
 
+        // Add current user's own posts
+        feedPosts.addAll(
+                postRepository.findByAuthor(currentUser)
+        );
+
+        // Add posts from users being followed
         for (Follow follow : following) {
 
             User followedUser = follow.getFollowing();
@@ -100,6 +107,7 @@ public class PostService {
             );
         }
 
+        // Newest posts first
         feedPosts.sort(
                 (post1, post2) ->
                         post2.getCreatedAt()
@@ -122,8 +130,12 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found."));
 
+        // Only post owner can update the post
         if (!post.getAuthor().getId().equals(user.getId())) {
-            throw new RuntimeException("You can only update your own posts.");
+
+            throw new RuntimeException(
+                    "You can only update your own posts."
+            );
         }
 
         if (request.getContent() == null ||
@@ -148,10 +160,13 @@ public class PostService {
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found."));
 
-        long likesCount = likeRepository.countByPost(post);
+        long likesCount =
+                likeRepository.countByPost(post);
 
         boolean likedByCurrentUser =
-                likeRepository.findByUserAndPost(currentUser, post).isPresent();
+                likeRepository
+                        .findByUserAndPost(currentUser, post)
+                        .isPresent();
 
         return new PostResponse(
                 post.getId(),
